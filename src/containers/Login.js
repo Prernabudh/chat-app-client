@@ -1,6 +1,7 @@
 import React from "react";
 import makeToast from "../Toaster";
 import axios from "axios";
+import {withRouter} from "react-router-dom";
 
 const LoginPage = (props) => {
   const emailRef = React.createRef();
@@ -14,12 +15,15 @@ const LoginPage = (props) => {
       .post("http://localhost:3001/users/login", {
         email,
         password,
-      })
+      }, {withCredentials:true})
       .then((response) => {
         console.log(response.data);
         makeToast("success", response.data.message);
         localStorage.setItem("LoggedIn", "true");
-        props.history.push("/dashboard");
+        localStorage.setItem("_id", response.data._id)
+        localStorage.setItem("name", response.data.name);
+        window.location.pathname="/dashboard";
+        props.setupSocket();
       })
       .catch((err) => {
         // console.log(err);
@@ -65,4 +69,4 @@ const LoginPage = (props) => {
   );
 };
 
-export default LoginPage;
+export default withRouter(LoginPage);

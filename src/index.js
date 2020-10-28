@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "./styles/Common.css";
+import "./styles/Chatroom.css"
 
 ReactDOM.render(
   <React.StrictMode>
