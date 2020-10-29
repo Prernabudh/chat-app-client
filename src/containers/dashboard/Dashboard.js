@@ -9,13 +9,14 @@ const Dashboard = () => {
   const getChatrooms = () => {
     axios
       .post(
-        "http://localhost:3001/chatrooms/",
+        "http://localhost:3001/chatrooms/getChatrooms",
         {
           withCredentials: true,
         },
         { id: userId }
       )
       .then((response) => {
+        console.log(response.data);
         setChatrooms(response.data);
       })
       .catch((err) => {});
@@ -26,7 +27,7 @@ const Dashboard = () => {
   }, []);
   return (
     <div className="card">
-      <div className="cardHeader">Chatrooms</div>
+      <div className="cardHeader">Chatroomss</div>
       <div className="chatrooms">
         {chatrooms.length !== 0
           ? chatrooms.map((chatroom) => {
