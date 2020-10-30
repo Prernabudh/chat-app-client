@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import Login from "./containers/Login";
-import Dashboard from "./containers/Dashboard";
-import Register from "./containers/Register";
+import Login from "./containers/login/Login";
+import Dashboard from "./containers/dashboard/Dashboard";
+import Register from "./containers/register/Register";
 import Index from "./containers/Index";
-import Chatroom from "./containers/Chatroom";
+import Chatroom from "./containers/chatroom/Chatroom";
 import makeToast from "./Toaster";
 import io from "socket.io-client";
 
@@ -39,6 +39,7 @@ const App = () => {
 
   useEffect(() => {
     setupSocket();
+    console.log("heyaaaaaaaaaaaaaaaaaa");
     if (!window.Notification) {
       console.log("Browser does not support notifications.");
     } else {

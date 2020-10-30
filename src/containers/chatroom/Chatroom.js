@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
+import "./Chatroom.css";
+import axios from "axios";
+import user from "../../assets/images/user.png";
 
 const Chatroom = ({ match, socket }) => {
   const chatroomId = match.params.id;
@@ -9,6 +12,8 @@ const Chatroom = ({ match, socket }) => {
   const [typing, setTyping] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [name, setName] = useState(localStorage.getItem("name"));
+  const [otherUser, setOtherUser] = useState("");
+  const [date, setDate] = useState("today");
 
   const handleTyping = () => {
     socket.emit("typing", { userId: userId, chatroomId: chatroomId });
@@ -52,6 +57,22 @@ const Chatroom = ({ match, socket }) => {
   }, [messages]);
 
   React.useEffect(() => {
+    axios
+      .post(
+        "http://localhost:3001/chatrooms/getMessages",
+        { chatroomId },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setMessages(response.data.messages);
+        setOtherUser(
+          response.data.userA._id === userId
+            ? response.data.userB.username
+            : response.data.userA.username
+        );
+      })
+      .catch((err) => {});
     if (socket) {
       socket.emit("joinRoom", {
         chatroomId,
@@ -67,25 +88,41 @@ const Chatroom = ({ match, socket }) => {
     };
   }, []);
 
+  const HandleDate = (props) => {
+    console.log(date);
+    setDate(props.date);
+    return <div>{date}</div>;
+  };
+
   return (
     <div className="chatroomPage">
       <div className="chatroomSection">
-        <div className="cardHeader">Chatroom Name</div>
+        <div className="otheruser-container">
+          <img src={user} className="otheruser-image"></img>
+          <div>
+            <div className="otheruser-name">{otherUser}</div>
+            {isTyping ? (
+              <div className="otheruser-typing">{typing + " is typing."}</div>
+            ) : null}
+          </div>
+        </div>
         <div className="chatroomContent">
           {messages.map((message, i) => (
             <div key={i} className="message">
-              <span
+              {console.log(message.userId)}
+              {i === 0 || message.date !== messages[i - 1].date ? (
+                <center className="message-date">{message.date}</center>
+              ) : null}
+              <div
                 className={
                   message.userId === userId ? "ownMessage" : "otherMessage"
                 }
               >
-                {message.name}:
-              </span>{" "}
-              {message.message}
-              <div>{message.time}</div>
+                {message.message}
+                <div className="message-time">{message.time}</div>
+              </div>
             </div>
           ))}
-          {isTyping ? typing + " is typing." : null}
         </div>
         <div className="chatroomActions">
           <div>
@@ -95,6 +132,7 @@ const Chatroom = ({ match, socket }) => {
               placeholder="Say something!"
               ref={messageRef}
               onChange={handleTyping}
+              className="chatroom-input"
             />
           </div>
           <div>

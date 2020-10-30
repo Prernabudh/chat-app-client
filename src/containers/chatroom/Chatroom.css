@@ -8,21 +8,25 @@
 }
 
 .chatroomSection {
-  width: 40vw;
-  height: 80vh;
+  width: 55vw;
+  min-height: 80vh;
+  max-height: 80vh;
   margin: auto;
-  border: 1px solid #eee;
   position: relative;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .chatroomContent {
   position: absolute;
-  top: 2.5rem;
+  top: 3.1rem;
   left: 0;
   right: 0;
   bottom: 3.5rem;
   padding: 0.5rem;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .chatroomActions {
@@ -37,6 +41,21 @@
   border-top: 1px solid #eee;
 }
 
+.chatroom-input {
+  padding: 10px;
+  border: none;
+  padding: 10;
+  width: 100%;
+  border-radius: 2px;
+  border-bottom: 1px solid #eee;
+  transition: all 0.5s;
+}
+
+.chatroom-input:focus {
+  outline: none;
+  border: none;
+}
+
 .chatroomActions button {
   height: 100%;
 }
@@ -46,11 +65,71 @@
 }
 
 .otherMessage {
-  color: #0099cc;
-  font-weight: bold;
+  float: left;
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: #e8e8e8;
+  max-width: 20vw;
+  padding: 7px;
+  font-size: 15px;
 }
 
 .ownMessage {
-  color: #00cc00;
-  font-weight: bold;
+  float: right;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: #7579e7;
+  max-width: 20vw;
+  padding: 7px;
+  color: white;
+  font-size: 15px;
+}
+
+.otheruser-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  padding: 5px 20px;
+  background-color: #7579e7;
+  display: flex;
+  flex-direction: row;
+}
+
+.otheruser-image {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.otheruser-name {
+  color: white;
+  font-size: 20px;
+}
+
+.otheruser-typing {
+  font-size: 12px;
+  color: white;
+}
+
+.otherMessage .message-time {
+  font-size: 10px;
+  text-align: left;
+}
+
+.ownMessage .message-time {
+  font-size: 10px;
+  text-align: right;
+  color: white;
+}
+
+.message-date {
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 15px;
 }

@@ -1,0 +1,38 @@
+.chatroom-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.chatroom-container .chats {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 600;
+  width: 40%;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.chatroom-heading {
+  text-align: center;
+  margin: 0;
+}
+
+.chats .chat {
+  display: flex;
+  flex-direction: row;
+}
+
+.chat .chatroom-user-image {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+a {
+  text-decoration: none;
+}

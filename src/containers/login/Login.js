@@ -9,7 +9,8 @@ const LoginPage = (props) => {
 
   useEffect(() => {
     console.log("in login");
-    if (localStorage.getItem("LoggedIn")) <Redirect to="/dashboard"></Redirect>;
+    if (localStorage.getItem("LoggedIn"))
+      return <Redirect to="/dashboard"></Redirect>;
   }, []);
 
   const loginUser = (props) => {
@@ -32,7 +33,7 @@ const LoginPage = (props) => {
         localStorage.setItem("_id", response.data._id);
         localStorage.setItem("name", response.data.name);
         await props.setLoggedIn();
-        props.history.push("/dashboard");
+        window.location.pathname = "/dashboard";
         props.setupSocket();
       })
       .catch((err) => {
@@ -49,7 +50,7 @@ const LoginPage = (props) => {
 
   return (
     <div className="card">
-      <div className="cardHeader">Login</div>
+      <div className="cardHeader">Wecome back</div>
       <div className="cardBody">
         <div className="inputGroup">
           <label htmlFor="email">Email</label>

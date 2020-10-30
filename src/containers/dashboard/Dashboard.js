@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import "./Dashboard.css";
+import user from "../../assets/images/user.png";
 
 const Dashboard = () => {
   const [chatrooms, setChatrooms] = useState([]);
@@ -10,10 +12,8 @@ const Dashboard = () => {
     axios
       .post(
         "http://localhost:3001/chatrooms/getChatrooms",
-        {
-          withCredentials: true,
-        },
-        { id: userId }
+        { id: userId },
+        { withCredentials: true }
       )
       .then((response) => {
         console.log(response.data);
@@ -26,22 +26,22 @@ const Dashboard = () => {
     getChatrooms();
   }, []);
   return (
-    <div className="card">
-      <div className="cardHeader">Chatroomss</div>
-      <div className="chatrooms">
-        {chatrooms.length !== 0
+    <div className="chatroom-container">
+      <div className="chats">
+        <h1 className="chatroom-heading">Your Chats</h1>
+        {chatrooms.length > 0
           ? chatrooms.map((chatroom) => {
               return (
-                <div key={chatroom._id} className="chatroom">
-                  <div>
-                    {chatroom.userA._id === userId
-                      ? chatroom.userB.name
-                      : chatroom.userA.name}
+                <Link to={"/chatroom/" + chatroom._id} key={chatroom._id}>
+                  <div className="chat">
+                    <img src={user} className="chatroom-user-image"></img>
+                    <div>
+                      {chatroom.userA._id === userId
+                        ? chatroom.userB.name
+                        : chatroom.userA.name}
+                    </div>
                   </div>
-                  <Link to={"/chatroom/" + chatroom._id}>
-                    <div className="join">Join</div>
-                  </Link>
-                </div>
+                </Link>
               );
             })
           : null}
