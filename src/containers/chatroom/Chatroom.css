@@ -1,0 +1,149 @@
+.chatroomPage {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  margin: -8px;
+}
+
+.chatroomSection {
+  width: 55vw;
+  min-height: 80vh;
+  max-height: 80vh;
+  margin: auto;
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.chatroomContent {
+  position: absolute;
+  top: 3.2rem;
+  left: 0;
+  right: 0;
+  bottom: 3.5rem;
+  padding: 0.5rem;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.chatroomContent::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chatroomContent::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.chatroomContent::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #7579e7;
+}
+
+.chatroomActions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr 72px;
+  grid-gap: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.chatroom-input {
+  padding: 10px;
+  border: none;
+  padding: 10;
+  width: 100%;
+  border-radius: 2px;
+  border-bottom: 1px solid #eee;
+  transition: all 0.5s;
+}
+
+.chatroom-input:focus {
+  outline: none;
+  border: none;
+}
+
+.chatroomActions button {
+  height: 100%;
+}
+
+.message {
+  margin-bottom: 0.25rem;
+}
+
+.otherMessage {
+  float: left;
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: #e8e8e8;
+  max-width: 20vw;
+  padding: 7px;
+  font-size: 15px;
+}
+
+.ownMessage {
+  float: right;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: #7579e7;
+  max-width: 20vw;
+  padding: 7px;
+  color: white;
+  font-size: 15px;
+}
+
+.otheruser-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  padding: 5px 20px;
+  background-color: #7579e7;
+  display: flex;
+  flex-direction: row;
+}
+
+.otheruser-image {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.otheruser-name {
+  color: white;
+  font-size: 20px;
+}
+
+.otheruser-typing {
+  font-size: 12px;
+  color: white;
+}
+
+.otherMessage .message-time {
+  font-size: 10px;
+  text-align: left;
+}
+
+.ownMessage .message-time {
+  font-size: 10px;
+  text-align: right;
+  color: white;
+}
+
+.message-date {
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 15px;
+}

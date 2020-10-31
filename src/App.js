@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Login from "./containers/Login";
-import Dashboard from "./containers/Dashboard";
-import Register from "./containers/Register";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import Login from "./containers/login/Login";
+import Dashboard from "./containers/dashboard/Dashboard";
+import Register from "./containers/register/Register";
 import Index from "./containers/Index";
-import Chatroom from "./containers/Chatroom";
+import Chatroom from "./containers/chatroom/Chatroom";
 import makeToast from "./Toaster";
 import io from "socket.io-client";
 
 const App = () => {
   const [socket, setSocket] = useState(null);
+  const [signin, setSignin] = useState(
+    localStorage.getItem("LoggedIn") === "true" ? true : false
+  );
   const setupSocket = () => {
     const token = localStorage.getItem("_id");
     if (token && !socket) {
@@ -62,22 +65,30 @@ const App = () => {
     <BrowserRouter>
       <Switch>
         <Route path="/" component={Index} exact />
-        <Route
-          path="/login"
-          render={() => <Login setupSocket={setupSocket}></Login>}
-          exact
-        />
-        <Route path="/register" component={Register} exact />
-        <Route
-          path="/dashboard"
-          render={() => <Dashboard socket={socket}></Dashboard>}
-          exact
-        />
-        <Route
-          path="/chatroom/:id"
-          component={() => <Chatroom socket={socket}></Chatroom>}
-          exact
-        />
+        {signin ? (
+          <>
+            <Route
+              path="/dashboard"
+              render={() => <Dashboard socket={socket}></Dashboard>}
+              exact
+            />
+            <Route
+              path="/chatroom/:id"
+              component={() => <Chatroom socket={socket}></Chatroom>}
+              exact
+            />
+          </>
+        ) : (
+          <>
+            <Route
+              path="/login"
+              render={() => <Login setupSocket={setupSocket}></Login>}
+              exact
+            />
+            <Route path="/register" component={Register} exact />
+          </>
+        )}
+        <Redirect></Redirect>
       </Switch>
     </BrowserRouter>
   );
