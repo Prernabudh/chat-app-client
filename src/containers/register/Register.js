@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import makeToast from "../../Toaster";
+import { Redirect } from "react-router-dom";
 
 const RegisterPage = (props) => {
   const nameRef = React.createRef();
@@ -39,6 +40,9 @@ const RegisterPage = (props) => {
 
   return (
     <div className="card">
+      {localStorage.getItem("LoggedIn") === "true" ? (
+        <Redirect to="/dashboard"></Redirect>
+      ) : null}
       <div className="cardHeader">Registration</div>
       <div className="cardBody">
         <div className="inputGroup">
@@ -49,6 +53,7 @@ const RegisterPage = (props) => {
             id="name"
             placeholder="John Doe"
             ref={nameRef}
+            className="input-field"
           />
         </div>
         <label htmlFor="email">Email</label>
@@ -58,9 +63,8 @@ const RegisterPage = (props) => {
           id="email"
           placeholder="abc@example.com"
           ref={emailRef}
+          className="input-field"
         />
-      </div>
-      <div className="inputGroup">
         <label htmlFor="password">Password</label>
         <input
           type="password"
@@ -68,6 +72,7 @@ const RegisterPage = (props) => {
           id="password"
           placeholder="Your Password"
           ref={passwordRef}
+          className="input-field"
         />
         <label htmlFor="useranem">Username</label>
         <input
@@ -76,6 +81,7 @@ const RegisterPage = (props) => {
           id="username"
           placeholder="Your Username"
           ref={usernameRef}
+          className="input-field"
         />
       </div>
       <button onClick={registerUser}>Register</button>

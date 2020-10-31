@@ -18,6 +18,7 @@ const Chatroom = ({ match, socket }) => {
   const [date, setDate] = useState("today");
   const [online, setOnline] = useState("Offline");
   const messagesEndRef = React.useRef(null);
+  const [end, setEnd] = useState(0);
 
   const handleLastscene = (lastSceneTime) => {
     const now = new Date();
@@ -72,10 +73,9 @@ const Chatroom = ({ match, socket }) => {
         if (message.userId !== userId) {
           setTyping(null);
           setIsTyping(false);
-          var notify = new Notification("You have a new message!", {
+          new Notification("You have a new message!", {
             body: "From: " + message.name,
           });
-          scrollToBottom();
         }
       });
       socket.on("typing", (user) => {
@@ -113,6 +113,8 @@ const Chatroom = ({ match, socket }) => {
             ? response.data.userB.username
             : response.data.userA.username
         );
+        console.log("just logging what i got = " + response.data.end);
+        setEnd(response.data.end);
         scrollToBottom();
         axios
           .post(
@@ -150,6 +152,33 @@ const Chatroom = ({ match, socket }) => {
     };
   }, []);
 
+  const handlePreviousMessages = () => {
+    let from;
+    let to;
+    console.log("end======> " + end);
+    if (end - 21 < 0) {
+      from = 0;
+      setEnd(0);
+    } else {
+      from = end - 21;
+      setEnd(end - 21);
+    }
+    to = end;
+    axios
+      .post(
+        "http://localhost:3001/chatrooms/getMessagesInSlots",
+        { chatroomId, from, to },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setMessages([...response.data.messages, ...messages]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className="chatroomPage">
       <div className="chatroomSection">
@@ -165,9 +194,15 @@ const Chatroom = ({ match, socket }) => {
           </div>
         </div>
         <div className="chatroomContent">
+          {end !== 0 ? (
+            <Button
+              title="Fetch previous messages"
+              onClick={handlePreviousMessages}
+            ></Button>
+          ) : null}
+
           {messages.map((message, i) => (
             <div key={i} className="message">
-              {console.log(message.userId)}
               {i === 0 || message.date !== messages[i - 1].date ? (
                 <center className="message-date">{message.date}</center>
               ) : null}

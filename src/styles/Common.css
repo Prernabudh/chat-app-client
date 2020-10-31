@@ -23,7 +23,7 @@ body {
 }
 
 .cardHeader {
-  background: #f7c52a;
+  background: #7579e7;
   padding: 0.75rem 1.5rem;
   border-radius: 2px;
   text-transform: uppercase;
@@ -63,4 +63,17 @@ label {
   background: #f7c52a;
   padding: 0.25rem 1rem;
   border-radius: 2px;
+}
+
+.input-field {
+  height: 50px;
+  width: 100%;
+  padding: 10;
+  border-radius: 2px;
+  border: none;
+}
+
+.input-field:focus {
+  border: none;
+  outline: none;
 }

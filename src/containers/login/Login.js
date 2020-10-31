@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import makeToast from "../../Toaster";
 import axios from "axios";
 import { withRouter, Redirect } from "react-router-dom";
+import Button from "../../components/Button/Button";
 
 const LoginPage = (props) => {
   const emailRef = React.createRef();
@@ -42,6 +43,9 @@ const LoginPage = (props) => {
 
   return (
     <div className="card">
+      {localStorage.getItem("LoggedIn") === "true" ? (
+        <Redirect to="/dashboard"></Redirect>
+      ) : null}
       <div className="cardHeader">Wecome back</div>
       <div className="cardBody">
         <div className="inputGroup">
@@ -52,6 +56,7 @@ const LoginPage = (props) => {
             id="email"
             placeholder="abc@example.com"
             ref={emailRef}
+            className="input-field"
           />
         </div>
         <div className="inputGroup">
@@ -62,11 +67,10 @@ const LoginPage = (props) => {
             id="password"
             placeholder="Your Password"
             ref={passwordRef}
+            className="input-field"
           />
         </div>
-        <button onClick={loginUser} style={{ cursor: "pointer" }}>
-          Login
-        </button>
+        <Button onClick={loginUser} title="Login"></Button>
       </div>
     </div>
   );
