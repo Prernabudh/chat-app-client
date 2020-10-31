@@ -1,0 +1,17 @@
+.buttons {
+  background-color: #7579e7;
+  height: 100px;
+  padding: 10px;
+  color: white;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.buttons:focus {
+  border: none;
+  outline: none;
+}

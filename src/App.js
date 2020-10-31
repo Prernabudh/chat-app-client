@@ -39,7 +39,6 @@ const App = () => {
 
   useEffect(() => {
     setupSocket();
-    console.log("heyaaaaaaaaaaaaaaaaaa");
     if (!window.Notification) {
       console.log("Browser does not support notifications.");
     } else {

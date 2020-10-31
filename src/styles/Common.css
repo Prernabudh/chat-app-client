@@ -47,14 +47,6 @@ body {
 label {
   font-size: 0.9rem;
 }
-button {
-  background: #f7c52a;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 2px;
-  width: 100%;
-  text-transform: uppercase;
-}
 
 .chatrooms {
   margin-top: 1rem;

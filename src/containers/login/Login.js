@@ -7,13 +7,7 @@ const LoginPage = (props) => {
   const emailRef = React.createRef();
   const passwordRef = React.createRef();
 
-  useEffect(() => {
-    console.log("in login");
-    if (localStorage.getItem("LoggedIn"))
-      return <Redirect to="/dashboard"></Redirect>;
-  }, []);
-
-  const loginUser = (props) => {
+  const loginUser = () => {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
 
@@ -26,15 +20,13 @@ const LoginPage = (props) => {
         },
         { withCredentials: true }
       )
-      .then(async (response) => {
+      .then((response) => {
         console.log(response.data);
         makeToast("success", response.data.message);
         localStorage.setItem("LoggedIn", "true");
         localStorage.setItem("_id", response.data._id);
         localStorage.setItem("name", response.data.name);
-        await props.setLoggedIn();
         window.location.pathname = "/dashboard";
-        props.setupSocket();
       })
       .catch((err) => {
         // console.log(err);

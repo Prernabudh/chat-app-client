@@ -3,8 +3,10 @@ import { withRouter } from "react-router-dom";
 import "./Chatroom.css";
 import axios from "axios";
 import user from "../../assets/images/user.png";
+import Button from "../../components/Button/Button";
 
 const Chatroom = ({ match, socket }) => {
+  console.log(socket);
   const chatroomId = match.params.id;
   const [messages, setMessages] = React.useState([]);
   const messageRef = React.useRef();
@@ -14,6 +16,38 @@ const Chatroom = ({ match, socket }) => {
   const [name, setName] = useState(localStorage.getItem("name"));
   const [otherUser, setOtherUser] = useState("");
   const [date, setDate] = useState("today");
+  const [online, setOnline] = useState("Offline");
+  const messagesEndRef = React.useRef(null);
+
+  const handleLastscene = (lastSceneTime) => {
+    const now = new Date();
+    const date = new Date(new Date(lastSceneTime));
+    const timeReceived =
+      (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+      ":" +
+      (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
+    if (lastSceneTime === "Online") return "Online";
+    else {
+      if (now.getMonth() !== date.getMonth())
+        return (
+          "Last scene " + (now.getMonth() - date.getMonth()) + " months ago"
+        );
+      else if (now.getDate() !== date.getDate()) {
+        if (now.getDate() - date.getDate() === 1)
+          return "Last scene yesterday at " + timeReceived;
+        else
+          return (
+            "Last scene " +
+            (now.getDate() - date.getDate()) +
+            " days ago at " +
+            timeReceived
+          );
+      } else return "Last scene today at " + timeReceived;
+    }
+  };
+  const scrollToBottom = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleTyping = () => {
     socket.emit("typing", { userId: userId, chatroomId: chatroomId });
@@ -41,9 +75,11 @@ const Chatroom = ({ match, socket }) => {
           var notify = new Notification("You have a new message!", {
             body: "From: " + message.name,
           });
+          scrollToBottom();
         }
       });
       socket.on("typing", (user) => {
+        console.log("typing");
         if (user.userId !== userId) {
           setTyping(user.name);
           setIsTyping(true);
@@ -52,6 +88,12 @@ const Chatroom = ({ match, socket }) => {
           setTyping(null);
           setIsTyping(false);
         }, 3000);
+      });
+      socket.on("userOnline", (user) => {
+        if (user.userId !== userId) setOnline("Online");
+      });
+      socket.on("userOffline", (user) => {
+        if (user.userId !== userId) setOnline(handleLastscene(user.time));
       });
     }
   }, [messages]);
@@ -71,11 +113,31 @@ const Chatroom = ({ match, socket }) => {
             ? response.data.userB.username
             : response.data.userA.username
         );
+        scrollToBottom();
+        axios
+          .post(
+            "http://localhost:3001/users/getUser",
+            {
+              _id:
+                response.data.userA._id === userId
+                  ? response.data.userB._id
+                  : response.data.userA._id,
+            },
+            { withCredentials: true }
+          )
+          .then((response) => {
+            console.log(response.data);
+            setOnline(handleLastscene(response.data.lastscene));
+          })
+          .catch((err) => {});
       })
       .catch((err) => {});
     if (socket) {
       socket.emit("joinRoom", {
         chatroomId,
+      });
+      socket.emit("userOnline", {
+        userId: userId,
       });
     }
     return () => {
@@ -88,12 +150,6 @@ const Chatroom = ({ match, socket }) => {
     };
   }, []);
 
-  const HandleDate = (props) => {
-    console.log(date);
-    setDate(props.date);
-    return <div>{date}</div>;
-  };
-
   return (
     <div className="chatroomPage">
       <div className="chatroomSection">
@@ -103,7 +159,9 @@ const Chatroom = ({ match, socket }) => {
             <div className="otheruser-name">{otherUser}</div>
             {isTyping ? (
               <div className="otheruser-typing">{typing + " is typing."}</div>
-            ) : null}
+            ) : (
+              <div className="otheruser-typing">{online}</div>
+            )}
           </div>
         </div>
         <div className="chatroomContent">
@@ -123,6 +181,15 @@ const Chatroom = ({ match, socket }) => {
               </div>
             </div>
           ))}
+          <div
+            ref={messagesEndRef}
+            style={{
+              backgroundColor: "transparent",
+              width: "100%",
+              height: "2px",
+              padding: "2px",
+            }}
+          />
         </div>
         <div className="chatroomActions">
           <div>
@@ -136,9 +203,7 @@ const Chatroom = ({ match, socket }) => {
             />
           </div>
           <div>
-            <button className="join" onClick={sendMessage}>
-              Send
-            </button>
+            <Button title="Send" onClick={sendMessage}></Button>
           </div>
         </div>
       </div>

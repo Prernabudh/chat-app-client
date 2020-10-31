@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import "./Dashboard.css";
 import user from "../../assets/images/user.png";
 
-const Dashboard = () => {
+const Dashboard = ({ socket }) => {
+  console.log(socket);
   const [chatrooms, setChatrooms] = useState([]);
   const userId = localStorage.getItem("_id");
 
@@ -23,8 +24,15 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    console.log("Reached here");
     getChatrooms();
-  }, []);
+    if (socket) {
+      console.log("here!!");
+      socket.emit("userOnline", {
+        userId: userId,
+      });
+    }
+  }, [socket]);
   return (
     <div className="chatroom-container">
       <div className="chats">
