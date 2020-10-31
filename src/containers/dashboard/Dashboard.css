@@ -36,3 +36,14 @@
 a {
   text-decoration: none;
 }
+
+.last-message {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.last-message-dark {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: bold;
+}

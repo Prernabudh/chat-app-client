@@ -43,6 +43,9 @@ const LoginPage = (props) => {
 
   return (
     <div className="card">
+      {localStorage.getItem("LoggedIn") === "true" ? (
+        <Redirect to="/dashboard"></Redirect>
+      ) : null}
       <div className="cardHeader">Wecome back</div>
       <div className="cardBody">
         <div className="inputGroup">

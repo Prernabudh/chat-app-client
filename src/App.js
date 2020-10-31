@@ -68,8 +68,13 @@ const App = () => {
         {signin ? (
           <>
             <Route
+              path="/login"
+              component={() => <Login setupSocket={setupSocket}></Login>}
+              exact
+            />
+            <Route
               path="/dashboard"
-              render={() => <Dashboard socket={socket}></Dashboard>}
+              component={() => <Dashboard socket={socket}></Dashboard>}
               exact
             />
             <Route
@@ -77,12 +82,13 @@ const App = () => {
               component={() => <Chatroom socket={socket}></Chatroom>}
               exact
             />
+            <Route path="/register" component={Register} exact />
           </>
         ) : (
           <>
             <Route
               path="/login"
-              render={() => <Login setupSocket={setupSocket}></Login>}
+              component={() => <Login setupSocket={setupSocket}></Login>}
               exact
             />
             <Route path="/register" component={Register} exact />

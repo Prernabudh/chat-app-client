@@ -53,8 +53,12 @@ const Dashboard = ({ socket, history }) => {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log(response.data);
-        setChatrooms(response.data);
+        console.log("this");
+        const temp = response.data.sort(
+          (a, b) => a.lastMessage.timestamp - b.lastMessage.timestamp
+        );
+        console.log(temp);
+        setChatrooms(temp);
       })
       .catch((err) => {});
   };
@@ -63,7 +67,6 @@ const Dashboard = ({ socket, history }) => {
     console.log("Reached here");
     getChatrooms();
     if (socket) {
-      console.log("here!!");
       socket.emit("userOnline", {
         userId: userId,
       });
@@ -103,6 +106,33 @@ const Dashboard = ({ socket, history }) => {
                       {chatroom.userA._id === userId
                         ? chatroom.userB.username
                         : chatroom.userA.username}
+                      {chatroom.userA._id === userId ? (
+                        new Date(chatroom.userAleave).getTime() <
+                        new Date(chatroom.lastMessage.timestamp).getTime() ? (
+                          <div className="last-message-dark">
+                            {chatroom.lastMessage.message}
+                          </div>
+                        ) : (
+                          <div className="last-message">
+                            {console.log(
+                              new Date(chatroom.userAleave).getTime() -
+                                new Date(
+                                  chatroom.lastMessage.timestamp
+                                ).getTime()
+                            )}
+                            {chatroom.lastMessage.message}
+                          </div>
+                        )
+                      ) : new Date(chatroom.userBleave).getTime() <
+                        new Date(chatroom.lastMessage.timestamp).getTime() ? (
+                        <div className="last-message-dark">
+                          {chatroom.lastMessage.message}
+                        </div>
+                      ) : (
+                        <div className="last-message">
+                          {chatroom.lastMessage.message}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Link>
