@@ -1,6 +1,6 @@
 .buttons {
   background-color: #7579e7;
-  height: 100px;
+  height: 40px;
   padding: 10px;
   color: white;
   text-align: center;
@@ -9,6 +9,7 @@
   width: 100%;
   text-transform: uppercase;
   border-radius: 2px;
+  margin-bottom: 5px;
 }
 
 .buttons:focus {

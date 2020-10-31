@@ -75,7 +75,6 @@ const Chatroom = ({ match, socket }) => {
           var notify = new Notification("You have a new message!", {
             body: "From: " + message.name,
           });
-          scrollToBottom();
         }
       });
       socket.on("typing", (user) => {
