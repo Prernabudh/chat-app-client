@@ -40,10 +40,18 @@ a {
 .last-message {
   margin-top: 5px;
   font-size: 12px;
+  position: relative;
 }
 
 .last-message-dark {
   margin-top: 5px;
   font-size: 12px;
   font-weight: bold;
+  position: relative;
+}
+
+.lastmessage-time {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }

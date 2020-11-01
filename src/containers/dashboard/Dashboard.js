@@ -46,6 +46,7 @@ const Dashboard = ({ socket, history }) => {
   };
 
   const getChatrooms = () => {
+    console.log("I get called again");
     axios
       .post(
         "http://localhost:3001/chatrooms/getChatrooms",
@@ -53,9 +54,10 @@ const Dashboard = ({ socket, history }) => {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log("this");
-        const temp = response.data.sort(
-          (a, b) => a.lastMessage.timestamp - b.lastMessage.timestamp
+        const temp = [...response.data].sort(
+          (a, b) =>
+            new Date(b.lastMessage.timestamp) -
+            new Date(a.lastMessage.timestamp)
         );
         console.log(temp);
         setChatrooms(temp);
@@ -67,8 +69,19 @@ const Dashboard = ({ socket, history }) => {
     console.log("Reached here");
     getChatrooms();
     if (socket) {
+      socket.emit("joinRoom", {
+        chatroomId: userId,
+      });
       socket.emit("userOnline", {
         userId: userId,
+      });
+      socket.on("newMessage", (message) => {
+        console.log("I received a message");
+        getChatrooms();
+        if (message.userId !== userId)
+          new Notification("You have a new message!", {
+            body: "From: " + message.name,
+          });
       });
     }
   }, [socket]);
@@ -102,7 +115,7 @@ const Dashboard = ({ socket, history }) => {
                 <Link to={"/chatroom/" + chatroom._id} key={chatroom._id}>
                   <div className="chat">
                     <img src={user} className="chatroom-user-image"></img>
-                    <div>
+                    <div style={{ width: "100%" }}>
                       {chatroom.userA._id === userId
                         ? chatroom.userB.username
                         : chatroom.userA.username}
@@ -110,10 +123,6 @@ const Dashboard = ({ socket, history }) => {
                         new Date(chatroom.userAleave).getTime() <
                         new Date(chatroom.lastMessage.timestamp).getTime() ? (
                           <div className="last-message-dark">
-                            {chatroom.lastMessage.message}
-                          </div>
-                        ) : (
-                          <div className="last-message">
                             {console.log(
                               new Date(chatroom.userAleave).getTime() -
                                 new Date(
@@ -121,16 +130,36 @@ const Dashboard = ({ socket, history }) => {
                                 ).getTime()
                             )}
                             {chatroom.lastMessage.message}
+                            <div className="lastmessage-time">
+                              {chatroom.lastMessage.time}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="last-message">
+                            {chatroom.lastMessage.message}
+                            <div className="lastmessage-time">
+                              {chatroom.lastMessage.time}
+                            </div>
                           </div>
                         )
                       ) : new Date(chatroom.userBleave).getTime() <
                         new Date(chatroom.lastMessage.timestamp).getTime() ? (
                         <div className="last-message-dark">
+                          {console.log(
+                            new Date(chatroom.userAleave).getTime() -
+                              new Date(chatroom.lastMessage.timestamp).getTime()
+                          )}
                           {chatroom.lastMessage.message}
+                          <div className="lastmessage-time">
+                            {chatroom.lastMessage.time}
+                          </div>
                         </div>
                       ) : (
                         <div className="last-message">
                           {chatroom.lastMessage.message}
+                          <div className="lastmessage-time">
+                            {chatroom.lastMessage.time}
+                          </div>
                         </div>
                       )}
                     </div>
