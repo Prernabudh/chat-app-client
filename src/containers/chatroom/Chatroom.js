@@ -4,12 +4,14 @@ import "./Chatroom.css";
 import axios from "axios";
 import user from "../../assets/images/user.png";
 import Button from "../../components/Button/Button";
+import "emoji-mart/css/emoji-mart.css";
+import { Picker } from "emoji-mart";
 
 const Chatroom = ({ match, socket }) => {
   console.log(socket);
   const chatroomId = match.params.id;
   const [messages, setMessages] = React.useState([]);
-  const messageRef = React.useRef();
+  const [message, setMessage] = useState("");
   const [userId, setUserId] = useState(localStorage.getItem("_id"));
   const [typing, setTyping] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
@@ -19,6 +21,7 @@ const Chatroom = ({ match, socket }) => {
   const [online, setOnline] = useState("Offline");
   const messagesEndRef = React.useRef(null);
   const [end, setEnd] = useState(0);
+  const [emojiBox, setEmojiBox] = useState(false);
 
   const handleLastscene = (lastSceneTime) => {
     const now = new Date();
@@ -50,18 +53,27 @@ const Chatroom = ({ match, socket }) => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleTyping = () => {
+  const handleTyping = (e) => {
+    setMessage(e.target.value);
     socket.emit("typing", { userId: userId, chatroomId: chatroomId });
+  };
+
+  const addEmoji = (emoji, event) => {
+    setMessage(message + emoji.native);
+  };
+
+  const showEmoji = () => {
+    setEmojiBox(!emojiBox);
   };
 
   const sendMessage = () => {
     if (socket) {
       socket.emit("chatroomMessage", {
         chatroomId,
-        message: messageRef.current.value,
+        message: message,
       });
 
-      messageRef.current.value = "";
+      setMessage("");
     }
   };
 
@@ -141,6 +153,9 @@ const Chatroom = ({ match, socket }) => {
       socket.emit("userOnline", {
         userId: userId,
       });
+      socket.emit("leaveRoom", {
+        chatroomId: userId,
+      });
     }
     return () => {
       //Component Unmount
@@ -181,6 +196,18 @@ const Chatroom = ({ match, socket }) => {
 
   return (
     <div className="chatroomPage">
+      {emojiBox ? (
+        <Picker
+          onSelect={addEmoji}
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "200",
+          }}
+        />
+      ) : null}
       <div className="chatroomSection">
         <div className="otheruser-container">
           <img src={user} className="otheruser-image"></img>
@@ -227,12 +254,15 @@ const Chatroom = ({ match, socket }) => {
           />
         </div>
         <div className="chatroomActions">
+          <button onClick={showEmoji} style={{ height: "10px", width: "10px" }}>
+            emoji
+          </button>
           <div>
             <input
               type="text"
               name="message"
               placeholder="Say something!"
-              ref={messageRef}
+              value={message}
               onChange={handleTyping}
               className="chatroom-input"
             />

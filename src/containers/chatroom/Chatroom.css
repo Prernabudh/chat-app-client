@@ -49,17 +49,17 @@
   left: 0;
   right: 0;
   padding: 0.5rem;
-  display: grid;
-  grid-template-columns: 1fr 72px;
-  grid-gap: 1rem;
   border-top: 1px solid #eee;
+  display: grid;
+  grid-template-columns: 1fr 6fr 1fr;
+  grid-column-gap: 5px;
 }
 
 .chatroom-input {
   padding: 10px;
   border: none;
   padding: 10;
-  width: 100%;
+  width: 40vw;
   border-radius: 2px;
   border-bottom: 1px solid #eee;
   transition: all 0.5s;
