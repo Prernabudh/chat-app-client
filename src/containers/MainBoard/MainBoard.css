@@ -1,0 +1,25 @@
+.main-board-container {
+  display: grid;
+  grid-template-columns: 2% 95%;
+  width: 100%;
+  height: 100%;
+}
+
+.navbar {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 2px;
+}
+
+.navbar-icons {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.navbar-icon {
+  cursor: pointer;
+  width: 20px;
+  margin-bottom: 10px;
+}

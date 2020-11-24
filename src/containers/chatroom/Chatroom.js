@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { withRouter } from "react-router-dom";
 import "./Chatroom.css";
 import axios from "axios";
 import user from "../../assets/images/user.png";
 import Button from "../../components/Button/Button";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
+import send from "../../assets/images/send.png";
+import Input from "../../components/Input/Input";
+import * as colors from "../../constants/colorConstants";
+import smiling from "../../assets/images/smiling.png";
 
-const Chatroom = ({ match, socket }) => {
-  console.log(socket);
-  const chatroomId = match.params.id;
+const Chatroom = ({ id, socket, mainColor }) => {
+  const chatroomId = id;
   const [messages, setMessages] = React.useState([]);
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState(localStorage.getItem("_id"));
@@ -153,9 +155,6 @@ const Chatroom = ({ match, socket }) => {
       socket.emit("userOnline", {
         userId: userId,
       });
-      socket.emit("leaveRoom", {
-        chatroomId: userId,
-      });
     }
     return () => {
       //Component Unmount
@@ -165,7 +164,7 @@ const Chatroom = ({ match, socket }) => {
         });
       }
     };
-  }, []);
+  }, [id]);
 
   const handlePreviousMessages = () => {
     let from;
@@ -201,14 +200,18 @@ const Chatroom = ({ match, socket }) => {
           onSelect={addEmoji}
           style={{
             position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
+            left: "30.3%",
+            top: "42%",
             zIndex: "200",
+            width: "69.7%",
+            height: "50px",
           }}
         />
       ) : null}
-      <div className="chatroomSection">
+      <div
+        className="chatroomSection"
+        style={{ height: emojiBox ? "42%" : "100%" }}
+      >
         <div className="otheruser-container">
           <img src={user} className="otheruser-image"></img>
           <div>
@@ -231,7 +234,14 @@ const Chatroom = ({ match, socket }) => {
           {messages.map((message, i) => (
             <div key={i} className="message">
               {i === 0 || message.date !== messages[i - 1].date ? (
-                <center className="message-date">{message.date}</center>
+                <center
+                  className="message-date"
+                  style={{
+                    color: mainColor === colors.black ? "white" : "black",
+                  }}
+                >
+                  {message.date}
+                </center>
               ) : null}
               <div
                 className={
@@ -253,22 +263,20 @@ const Chatroom = ({ match, socket }) => {
             }}
           />
         </div>
-        <div className="chatroomActions">
-          <button onClick={showEmoji} style={{ height: "10px", width: "10px" }}>
-            emoji
-          </button>
+        <div className="chatroomActions" style={{ backgroundColor: mainColor }}>
+          <div onClick={showEmoji} style={{ cursor: "pointer" }}>
+            <img src={smiling}></img>
+          </div>
           <div>
-            <input
-              type="text"
-              name="message"
-              placeholder="Say something!"
+            <Input
+              placeholder="Say something..."
               value={message}
               onChange={handleTyping}
               className="chatroom-input"
             />
           </div>
-          <div>
-            <Button title="Send" onClick={sendMessage}></Button>
+          <div onClick={sendMessage} style={{ cursor: "pointer" }}>
+            <img src={send}></img>
           </div>
         </div>
       </div>
@@ -276,4 +284,4 @@ const Chatroom = ({ match, socket }) => {
   );
 };
 
-export default withRouter(Chatroom);
+export default Chatroom;

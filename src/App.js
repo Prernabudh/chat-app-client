@@ -1,19 +1,36 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import Login from "./containers/login/Login";
-import Dashboard from "./containers/dashboard/Dashboard";
-import Register from "./containers/register/Register";
-import Index from "./containers/Index";
-import Chatroom from "./containers/chatroom/Chatroom";
 import makeToast from "./Toaster";
 import io from "socket.io-client";
+import Card from "./components/Card/Card";
+import Switcher from "react-switch";
+import { black, white, primary } from "./constants/colorConstants";
+import MainBoard from "./containers/MainBoard/MainBoard";
+import blob from "./assets/images/blob.svg";
+import blob2 from "./assets/images/blob2.svg";
+import sunrise from "./assets/images/sunrise.png";
+import moon from "./assets/images/moon.png";
 
 const App = () => {
   const [socket, setSocket] = useState(null);
-  const [signin, setSignin] = useState(
-    localStorage.getItem("LoggedIn") === "true" ? true : false
+  const [checked, setChecked] = useState(
+    localStorage.getItem("mainColor") === black ? true : false
   );
+  const [mainColor, setMainColor] = useState(
+    localStorage.getItem("mainColor")
+      ? localStorage.getItem("mainColor")
+      : white
+  );
+  const [loggedIn, setLoggedIn] = useState(
+    localStorage.getItem("loggedIn") ? true : false
+  );
+
+  const handleSwitch = async () => {
+    await setChecked(!checked);
+    setMainColor(!checked ? black : white);
+    localStorage.setItem("mainColor", !checked ? black : white);
+  };
   const setupSocket = () => {
     const token = localStorage.getItem("_id");
     if (token && !socket) {
@@ -62,41 +79,41 @@ const App = () => {
     }
   }, []);
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route path="/" component={Index} exact />
-        {signin ? (
-          <>
-            <Route
-              path="/login"
-              component={() => <Login setupSocket={setupSocket}></Login>}
-              exact
-            />
-            <Route
-              path="/dashboard"
-              component={() => <Dashboard socket={socket}></Dashboard>}
-              exact
-            />
-            <Route
-              path="/chatroom/:id"
-              component={() => <Chatroom socket={socket}></Chatroom>}
-              exact
-            />
-            <Route path="/register" component={Register} exact />
-          </>
+    <div className="App" style={{ backgroundColor: mainColor }}>
+      <div className="switch">
+        <img
+          src={sunrise}
+          style={{ marginRight: "6px", marginBottom: "2px", height: "24px" }}
+        ></img>
+        <Switcher
+          onChange={handleSwitch}
+          checked={checked}
+          uncheckedIcon={false}
+          checkedIcon={false}
+          onColor={white}
+          offColor={black}
+          offHandleColor={primary}
+          onHandleColor={primary}
+        />
+        <img
+          src={moon}
+          style={{ marginLeft: "6px", height: "16px", marginBottom: "5px" }}
+        ></img>
+      </div>
+      <img src={blob} className="top-design"></img>
+      <img src={blob2} className="top-design-2"></img>
+      <Card backgroundColor={mainColor}>
+        {!loggedIn ? (
+          <Login
+            setupSocket={setupSocket}
+            mainColor={mainColor}
+            setLoggedIn={setLoggedIn}
+          ></Login>
         ) : (
-          <>
-            <Route
-              path="/login"
-              component={() => <Login setupSocket={setupSocket}></Login>}
-              exact
-            />
-            <Route path="/register" component={Register} exact />
-          </>
+          <MainBoard socket={socket} mainColor={mainColor}></MainBoard>
         )}
-        <Redirect></Redirect>
-      </Switch>
-    </BrowserRouter>
+      </Card>
+    </div>
   );
 };
 

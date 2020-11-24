@@ -1,19 +1,14 @@
 .chatroomPage {
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100vw;
-  margin: -8px;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 .chatroomSection {
-  width: 55vw;
-  min-height: 80vh;
-  max-height: 80vh;
+  width: 100%;
+  height: 100%;
   margin: auto;
   position: relative;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .chatroomContent {
@@ -49,9 +44,8 @@
   left: 0;
   right: 0;
   padding: 0.5rem;
-  border-top: 1px solid #eee;
   display: grid;
-  grid-template-columns: 1fr 6fr 1fr;
+  grid-template-columns: 5% 90% 5%;
   grid-column-gap: 5px;
 }
 
