@@ -1,51 +1,44 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import "./Dashboard.css";
 import user from "../../assets/images/user.png";
 import Heading from "../../components/Headings/Headings";
-import Button from "../../components/Button/Button";
-import { withRouter } from "react-router-dom";
+import Input from "../../components/Input/Input";
+import * as colors from "../../constants/colorConstants";
+import Chatroom from "../chatroom/Chatroom";
 
-const Dashboard = ({ socket, history }) => {
+const Dashboard = ({ socket, mainColor }) => {
   const [chatrooms, setChatrooms] = useState([]);
-  const [username, setUsername] = useState("");
-  const [searchResult, setSearchResult] = useState(null);
+  const [roomId, setRoomId] = useState("");
   const userId = localStorage.getItem("_id");
 
-  const handleInput = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const handleSearch = () => {
-    axios
-      .post(
-        "http://localhost:3001/users/findByUsername",
-        { username },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        console.log(response.data);
-        setSearchResult(response.data);
-      })
-      .catch((err) => {});
-  };
-
-  const handleConversation = (id) => {
-    axios
-      .post(
-        "http://localhost:3001/chatrooms/createChatroom",
-        { userA: userId, userB: id },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        console.log(response.data);
-        history.push("/chatroom/" + response.data._id);
-      })
-      .catch((err) => {});
+  const displayChatroom = (id) => {
+    console.log(id);
+    setRoomId(id);
   };
 
   const getChatrooms = () => {
+    console.log("I get called again");
+    axios
+      .post(
+        "http://localhost:3001/chatrooms/getChatrooms",
+        { id: userId },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        const temp = [...response.data].sort(
+          (a, b) =>
+            new Date(b.lastMessage.timestamp) -
+            new Date(a.lastMessage.timestamp)
+        );
+        console.log(temp);
+        setRoomId(temp[0]._id);
+        setChatrooms(temp);
+      })
+      .catch((err) => {});
+  };
+
+  const getChatroomsAgain = () => {
     console.log("I get called again");
     axios
       .post(
@@ -72,12 +65,13 @@ const Dashboard = ({ socket, history }) => {
       socket.emit("joinRoom", {
         chatroomId: userId,
       });
+      socket.emit("notification");
       socket.emit("userOnline", {
         userId: userId,
       });
-      socket.on("newMessage", (message) => {
-        console.log("I received a message");
-        getChatrooms();
+      socket.on("reloadDashboard", (message) => {
+        console.log("I received a message!!!!!!!!!");
+        getChatroomsAgain();
         if (message.userId !== userId)
           new Notification("You have a new message!", {
             body: "From: " + message.name,
@@ -87,64 +81,51 @@ const Dashboard = ({ socket, history }) => {
   }, [socket]);
   return (
     <div className="chatroom-container">
-      <div className="chats">
-        <h1 className="chatroom-heading">Your Chats</h1>
-        <Heading type="sub-heading">Find people</Heading>
-        <input
-          className="input-field"
-          placeholder="Enter username"
-          value={username}
-          onChange={handleInput}
-        ></input>
-        <Button title="Find" onClick={handleSearch}></Button>
-        {searchResult ? (
-          <div className="chat" style={{ marginTop: "10px" }}>
-            <img src={user} className="chatroom-user-image"></img>
-            <Heading type="sub-heading">{searchResult.username}</Heading>
-            <div style={{ width: "35%", marginLeft: "20px" }}>
-              <Button
-                title="Start conversation"
-                onClick={() => handleConversation(searchResult._id)}
-              ></Button>
-            </div>
-          </div>
-        ) : null}
+      <div
+        className="chats"
+        style={{
+          backgroundColor: mainColor === colors.black ? "#303841" : "#fcfcfc",
+        }}
+      >
+        <Heading type="heading" color={colors.primary}>
+          Chats
+        </Heading>
+        <Input placeholder="Search for someone..."></Input>
         {chatrooms.length > 0
           ? chatrooms.map((chatroom) => {
               return chatroom.messages.length > 0 ? (
-                <Link to={"/chatroom/" + chatroom._id} key={chatroom._id}>
-                  <div className="chat">
-                    <img src={user} className="chatroom-user-image"></img>
-                    <div style={{ width: "100%" }}>
-                      {chatroom.userA._id === userId
-                        ? chatroom.userB.username
-                        : chatroom.userA.username}
-                      {chatroom.userA._id === userId ? (
-                        new Date(chatroom.userAleave).getTime() <
-                        new Date(chatroom.lastMessage.timestamp).getTime() ? (
-                          <div className="last-message-dark">
-                            {console.log(
-                              new Date(chatroom.userAleave).getTime() -
-                                new Date(
-                                  chatroom.lastMessage.timestamp
-                                ).getTime()
-                            )}
-                            {chatroom.lastMessage.message}
-                            <div className="lastmessage-time">
-                              {chatroom.lastMessage.time}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="last-message">
-                            {chatroom.lastMessage.message}
-                            <div className="lastmessage-time">
-                              {chatroom.lastMessage.time}
-                            </div>
-                          </div>
-                        )
-                      ) : new Date(chatroom.userBleave).getTime() <
-                        new Date(chatroom.lastMessage.timestamp).getTime() ? (
-                        <div className="last-message-dark">
+                <div
+                  className="chat"
+                  key={chatroom._id}
+                  style={{
+                    backgroundColor:
+                      chatroom._id === roomId ? colors.primary : mainColor,
+                  }}
+                  onClick={() => displayChatroom(chatroom._id)}
+                >
+                  <img src={user} className="chatroom-user-image"></img>
+                  <div
+                    style={{
+                      width: "100%",
+                      color:
+                        mainColor === colors.black ? colors.white : "black",
+                    }}
+                  >
+                    {chatroom.userA._id === userId
+                      ? chatroom.userB.username
+                      : chatroom.userA.username}
+                    {chatroom.userA._id === userId ? (
+                      new Date(chatroom.userAleave).getTime() <
+                      new Date(chatroom.lastMessage.timestamp).getTime() ? (
+                        <div
+                          className="last-message-dark"
+                          style={{
+                            color:
+                              mainColor === colors.black
+                                ? colors.white
+                                : "black",
+                          }}
+                        >
                           {console.log(
                             new Date(chatroom.userAleave).getTime() -
                               new Date(chatroom.lastMessage.timestamp).getTime()
@@ -155,22 +136,60 @@ const Dashboard = ({ socket, history }) => {
                           </div>
                         </div>
                       ) : (
-                        <div className="last-message">
+                        <div
+                          className="last-message"
+                          style={{
+                            color:
+                              mainColor === colors.black
+                                ? colors.white
+                                : "black",
+                          }}
+                        >
                           {chatroom.lastMessage.message}
                           <div className="lastmessage-time">
                             {chatroom.lastMessage.time}
                           </div>
                         </div>
-                      )}
-                    </div>
+                      )
+                    ) : new Date(chatroom.userBleave).getTime() <
+                      new Date(chatroom.lastMessage.timestamp).getTime() ? (
+                      <div
+                        className="last-message-dark"
+                        style={{
+                          color:
+                            mainColor === colors.black ? colors.white : "black",
+                        }}
+                      >
+                        {chatroom.lastMessage.message}
+                        <div className="lastmessage-time">
+                          {chatroom.lastMessage.time}
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className="last-message"
+                        style={{
+                          color:
+                            mainColor === colors.black ? colors.white : "black",
+                        }}
+                      >
+                        {chatroom.lastMessage.message}
+                        <div className="lastmessage-time">
+                          {chatroom.lastMessage.time}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </Link>
+                </div>
               ) : null;
             })
           : null}
+      </div>
+      <div>
+        <Chatroom id={roomId} socket={socket} mainColor={mainColor}></Chatroom>
       </div>
     </div>
   );
 };
 
-export default withRouter(Dashboard);
+export default Dashboard;
